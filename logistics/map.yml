@@ -1,0 +1,302 @@
+---
+title: GeoNode Summit 2016 Logistics
+view:
+  baselayer: osm
+  featurelayers:
+    - train_station
+    - metro_station
+  latitude: 41.8667
+  longitude: 12.4920
+  maxZoom: 18
+  minZoom: 0
+  zoom: 11
+controls:
+  attribution: false
+  legend: false
+  zoom: false
+renderlayers:
+  - train_station
+  - metro_station
+  - osm
+baselayers:
+  - id: osm
+    title: OpenStreetMap
+    description: OpenStreetMap Basemap, Standard Style
+    legend:
+      label: OpenStreetMap
+    source:
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      name: OpenStreetMap
+      tile:
+        url: https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png
+      type: tiles
+featurelayers:
+  - id: wld_poi_facilities_wfp
+    type: WMS
+    title: "Global WFP Facilities"
+    description: "WFP Facilities worldwide, Country Office, Sub-Office, Field Office, Area Office, Humanitarian Response Depot."
+    source:
+      name: "WFP"
+      attribution: "WFP GeoNode"
+    wms:
+      version: "1.1.1"
+      layers: ["geonode:wld_poi_facilities_wfp"]
+      styles: []
+      format: 'image/png'
+      transparent: true
+      buffer: 256
+      url: "http://geonode.wfp.org/cors/geoserver/wms"
+      cql_filter: "iso3 = 'HTI'"
+    wfs:
+      version: "1.0.0"  # Needs to 1.0.0 or returns bad results for some reason.
+      url: "http://geonode.wfp.org/cors/geoserver/wfs"
+      geometry: shape
+    popup:
+      title: "Global WFP Facilities: {{ feature.attributes.name }}"
+      maxWidth: 550
+      panes:
+        - id: "popup_overview"
+          tab:
+            label: "Overview"
+          fields:
+            - output: name
+              inputs:
+                - 'whlocation'
+                - 'place'
+              label: Name
+            - attribute: facility
+              label: Facility
+              when: "defined"
+            - attribute: status
+              label: Status
+            - attribute: country
+              label: Country
+        - id: "popup_location"
+          tab:
+            label: "Location"
+          fields:
+            - attribute: locprecision
+              label: Location Precision
+            - attribute: latitude
+              label: Latitude
+            - attribute: longitude
+              label: Longitude
+            - attribute: compasscode
+              label: Compass Code
+              when: "defined"
+            - attribute: geonameid
+              label: GeoName ID
+              when: "defined"
+        - id: "popup_currency"
+          tab:
+            label: "Currency"
+          fields:
+            - attribute: lastcheckdate
+              label: Last Check Date
+              type: date
+              format: 'medium'
+              fallback: 'Not specified'
+            - attribute: createdate
+              label: Date Created
+              type: date
+              format: 'medium'
+            - attribute: updatedate
+              label: Date Updated
+              type: date
+              format: 'medium'
+        - id: "popup_links"
+          tab:
+            label: "Links"
+          fields:
+            - attribute: geonameid
+              value: "{{ feature.attributes.geonameid }}"
+              type: link
+              label: "GeoNames"
+              url: "http://www.geonames.org/{{ feature.attributes.geonameid }}/"
+              when: "defined"
+            - value: "{{ feature.geometry.lat | number : 4 }}, {{ feature.geometry.lng | number : 4 }}"
+              type: link
+              label: "OpenStreetMap"
+              url: "https://www.openstreetmap.org/#map=15/{{ feature.geometry.lat }}/{{ feature.geometry.lng }}"
+overlays:
+  - id: attribution
+    type: text
+    position:
+      bottom: 8px
+      right: 8px
+    text:
+      content: "&copy; [OpenStreetMap](http://www.openstreetmap.org/copyright)"
+      font:
+        style: normal
+        family: Verdana
+        size: 1.5rem
+    css:
+      properties:
+        - { name: padding, value: 8px }
+        - { name: background, value: "rgba(0, 0, 0, 0.4)" }
+        - { name: border, value: "2px solid #0374e6" }
+        - { name: border-radius, value: 8px }
+        - { name: line-height, value: 1.5rem }
+        - { name: color, value: white }
+  - id: powered_by_geodash
+    type: text
+    position:
+      bottom: 8px
+      left: 8px
+    text:
+      content: "Powered by GeoDash"
+      font:
+        style: normal
+        family: Verdana
+        size: 1.5rem
+    link:
+      url: "http://geodash.io"
+      target: "_blank"
+    css:
+      properties:
+        - { name: padding, value: 8px }
+        - { name: background, value: "rgba(0, 0, 0, 0.4)" }
+        - { name: border, value: "2px solid #0374e6" }
+        - { name: border-radius, value: 8px }
+        - { name: line-height, value: 1.5rem }
+        - { name: color, value: white }
+  - id: zoom_in
+    type: text
+    title: "Zoom In"
+    position: { top: 8px, left: 8px, bottom: auto, right: auto }
+    text:
+      content: ""
+      font:
+        family: FontAwesome
+        size: 1.5rem
+    intent:
+      name: zoomIn
+    tooltip: { placement: right, content: "Zoom In" }
+    css:
+      properties:
+        - { name: padding, value: 8px }
+        - { name: background, value: "rgba(0,0,0, 0.4)" }
+        - { name: border, value: "2px solid #0374e6" }
+        - { name: border-radius, value: "8px 8px 0px 0px" }
+        - { name: line-height, value: 1.5rem }
+  - id: zoom_out
+    type: text
+    title: "Zoom Out"
+    position: { top: calc(8px + 10px + 1.5rem + 10px), left: 8px, bottom: auto, right: auto }
+    text:
+      content: ""
+      font:
+        family: FontAwesome
+        size: 1.5rem
+    intent:
+      name: zoomOut
+    tooltip: { placement: right, content: "Zoom Out" }
+    css:
+      properties:
+        - { name: padding, value: 8px }
+        - { name: background, value: "rgba(0,0,0, 0.4)" }
+        - { name: border, value: "2px solid #0374e6" }
+        - { name: border-radius, value: "0px 0px 8px 8px" }
+        - { name: line-height, value: 1.5rem }
+  - id: reset_extent
+    type: text
+    title: "Reset Extent"
+    position: { top: calc(8px + 10px + 1.5rem + 10px + 8px + 10px + 1.5rem + 10px), left: 8px, bottom: auto, right: auto }
+    text:
+      content: ""
+      font:
+        family: FontAwesome
+        size: 1.5rem
+    intent:
+      name: zoomToLayer
+      properties:
+        - { name: layer, value: train_station }
+    tooltip: { placement: right, content: "Reset Extent" }
+    css:
+      properties:
+        - { name: padding, value: 8px }
+        - { name: background, value: "rgba(0,0,0, 0.4)" }
+        - { name: border, value: "2px solid #0374e6" }
+        - { name: border-radius, value: 8px }
+        - { name: line-height, value: 20px }
+  - id: toggle_fullscreen
+    type: text
+    title: "Toggle Full Screen"
+    position: { top: calc(8px + 10px + 1.5rem + 10px + 8px + 10px + 1.5rem + 10px + 8px + 10px + 1.5rem + 10px), left: 8px, bottom: auto, right: auto }
+    text:
+      content: ""
+      font:
+        family: FontAwesome
+        size: 1.5rem
+    intent: { name: toggleFullScreen }
+    tooltip: { placement: right, content: "Toggle Full Screen" }
+    css:
+      properties:
+        - { name: padding, value: 8px }
+        - { name: background, value: "rgba(0,0,0, 0.4)" }
+        - { name: border, value: "2px solid #0374e6" }
+        - { name: border-radius, value: 8px }
+        - { name: line-height, value: 1.5rem }
+  - id: print_map
+    type: text
+    title: "Print Map"
+    position: { top: calc(8px + 10px + 1.5rem + 10px + 8px + 10px + 1.5rem + 10px + 8px + 10px + 1.5rem + 10px + 8px + 10px + 1.5rem + 10px), left: 8px, bottom: auto, right: auto }
+    text:
+      content: ""
+      font:
+        family: FontAwesome
+        size: 1.5rem
+    intent:
+      name: printMap
+    tooltip: { placement: right, content: "Print Map" }
+    css:
+      properties:
+        - { name: padding, value: 8px }
+        - { name: background, value: "rgba(0,0,0, 0.4)" }
+        - { name: border, value: "2px solid #0374e6" }
+        - { name: border-radius, value: 8px }
+        - { name: line-height, value: 1.5rem }
+  - id: submit_issue
+    type: text
+    title: "Submit Issue"
+    position: { top: calc(8px + 10px + 1.5rem + 10px + 8px + 10px + 1.5rem + 10px + 8px + 10px + 1.5rem + 10px + 8px + 10px + 1.5rem + 10px + 8px + 10px + 1.5rem + 10px), left: 8px, bottom: auto, right: auto }
+    text:
+      content: ""
+      font:
+        family: FontAwesome
+        size: 1.5rem
+    link:
+      url: "http://github.com/geonode/geonode-summit-2016/issues"
+      target: "_blank"
+    tooltip: { placement: right, content: "Submit an Issue" }
+    css:
+      properties:
+        - { name: padding, value: 8px }
+        - { name: background, value: "rgba(0,0,0, 0.4)" }
+        - { name: border, value: "2px solid #0374e6" }
+        - { name: border-radius, value: 8px }
+        - { name: line-height, value: 1.5rem }
+legend:
+  title: Legend
+  position:
+    bottom: 80px
+    left: auto
+    right: 8px
+    top: auto
+  width: 360px
+  height: auto
+  grid: ["col-sm-4", "col-sm-8"]
+  css:
+    properties:
+    - name: padding
+      value: 8px
+    - name: background
+      value: '#EEE'
+    - name: border
+      value: '2px solid #0374e6'
+    - name: border-radius
+      value: 8px
+    - name: line-height
+      value: 20px
+    - name: color
+      value: black
